@@ -1,12 +1,10 @@
-const express = require("express")
-const router = express.Router()
+const express = require("express");
+const router = express.Router();
 
+const { newJobs ,getJobs} = require("../controllers/jobsController");
 
-router.get("/jobs",(req,res)=>{
-    res.status(200).json({
-        success:true,
-        message:"This route will display fddfff ssall jobs in future"
-    })
-})
+router.route("/jobs").get(getJobs)
 
-module.exports = router
+router.route("/job/new").post(newJobs);
+
+module.exports = router;
