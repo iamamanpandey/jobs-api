@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-
+const slugify = require("slugify");
 
 const jobsScheme = new mongoose.Schema({
   title: {
@@ -22,6 +22,21 @@ const jobsScheme = new mongoose.Schema({
   address: {
     type: String,
     required: [true, "Please add an address."],
+  },
+  location: {
+    type: {
+      type: String,
+      enum: ["Point"],
+    },
+    coordinates: {
+      type: [Number],
+      index: "2dsphere",
+    },
+    formattedAddress: String,
+    city: String,
+    state: String,
+    zipCode: String,
+    country: String,
   },
   company: {
     type: String,
@@ -93,4 +108,9 @@ const jobsScheme = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Job",jobsScheme)
+// creating Job slug before saving
+jobsScheme.pre("save", function (next) {
+  this.slug = slugify(this.title, { lower: true });
+  next();
+});
+module.exports = mongoose.model("Job", jobsScheme);
