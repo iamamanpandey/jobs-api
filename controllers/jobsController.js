@@ -1,5 +1,6 @@
 const Job = require("../models/jobs");
 const mongoose = require("mongoose");
+const ErrorHandler = require("../utils/errorHandlers");
 
 exports.getJobs = async (req, res, next) => {
   const job = await Job.find();
@@ -21,9 +22,8 @@ exports.getJob = async (req, res, next) => {
     if (isValidObjectId) {
       job = await Job.findOne({ _id: req.params.id });
     } else {
-
       job = await Job.findOne({ slug: req.params.slug });
-      console.log(req.params.slug)
+      console.log(req.params.slug);
     }
     if (!job || job.length === 0) {
       return res.status(404).json({
@@ -50,14 +50,11 @@ exports.newJobs = async (req, res, next) => {
   });
 };
 
-exports.updateJob = async (req, res) => {
+exports.updateJob = async (req, res, next) => {
   let job = await Job.findById(req?.params?.id);
 
   if (!job) {
-    res.status(404).json({
-      success: false,
-      message: "Job not found.",
-    });
+    return next(new ErrorHandler("Job not found", 404));
   }
   job = await Job.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
