@@ -8,15 +8,22 @@ env.config({ path: "./config/config.env" });
 const errorMiddleware = require("./middleware/errors.js");
 const PORT = process.env.PORT;
 const jobs = require("./routes/jobs");
+const ErrorHandler = require("./utils/errorHandlers.js");
 
 app.use(bodyParser.json());
 app.use("/api/v1", jobs);
+
+// handle unhandle routes
+app.all("*", (req, res, next) => {
+  next(new ErrorHandler(`${req.originalUrl} route not fund`, 404));
+});
+
 app.use(errorMiddleware);
 
 process.on("uncaughtException", (err) => {
   console.log("Error:", err);
   console.log("Shutting dow the server due to handled promise rejection.");
-    process.exit(1);
+  process.exit(1);
 });
 
 connectDatabase();
