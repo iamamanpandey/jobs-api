@@ -23,21 +23,6 @@ const jobsScheme = new mongoose.Schema({
     type: String,
     required: [true, "Please add an address."],
   },
-  location: {
-    type: {
-      type: String,
-      enum: ["Point"],
-    },
-    coordinates: {
-      type: [Number],
-      index: "2dsphere",
-    },
-    formattedAddress: String,
-    city: String,
-    state: String,
-    zipCode: String,
-    country: String,
-  },
   company: {
     type: String,
     required: [true, "Please add Company name."],
